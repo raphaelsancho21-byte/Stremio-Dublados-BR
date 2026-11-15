@@ -1,45 +1,66 @@
 # Stremio Dublados BR 🇧🇷
 
-Addon de catálogo para Stremio com foco em conteúdo em português do Brasil.
+Addon independente para Stremio em português. **A V0.2 já implementa o recurso de reprodução `stream`**, mas **não fornece episódios de The Rookie** por conta própria: os streams exigem fontes autorizadas e válidas.
 
-## V0.1
+## O que funciona na V0.2
 
-- Catálogo de séries, inicialmente com **The Rookie** (IMDb `tt7587890`).
-- Listagem das temporadas **1 a 8** a partir de metadados públicos do Cinemeta, conforme disponibilidade da fonte.
-- Pesquisa por `The Rookie` ou `O Novato`.
-- Descrição em português.
-- Sem links de vídeo não autorizados e sem promessa de disponibilidade de dublagem.
+- Catálogo de **The Rookie** (`tt7587890`), incluindo os episódios disponíveis nos metadados Cinemeta das temporadas 1–8.
+- Pesquisa por The Rookie / O Novato.
+- Novo catálogo **Teste de reprodução (livre)**, com `Big Buck Bunny`, curta aberto do Blender que permite verificar o player do Stremio sem uma conta de streaming.
+- Recurso `stream` implementado para retornar vídeos autorizados associados a episódios específicos, quando configurados em `streams.json`.
+- Informação de idioma e qualidade nos nomes dos streams (fornecida por quem configura a fonte).
 
-**Aviso:** este addon fornece **catálogo e metadados**, não os episódios ou streams. A presença da série na lista não garante áudio PT-BR. Para assistir, use um serviço que possua os direitos e ofereça a faixa de áudio desejada.
+## Instalar no Windows
 
-## Rodar no Windows
-
-Instale o [Node.js 18+](https://nodejs.org/) e abra o PowerShell:
+Requer [Node.js 18+](https://nodejs.org/), Git e Stremio Desktop.
 
 ```powershell
 git clone https://github.com/raphaelsancho21-byte/Stremio-Dublados-BR.git
 cd Stremio-Dublados-BR
 npm install
+npm test
 npm start
 ```
 
-Com o servidor em execução, abra `http://127.0.0.1:7000/manifest.json` e instale a URL no Stremio (na seção **Addons / Instalar addon**). A instalação local funciona na mesma máquina; para outros dispositivos é necessário hospedar em **HTTPS**.
+Com o PowerShell ainda aberto, instale no Stremio a URL:
 
-## Hospedagem
+`http://127.0.0.1:7000/manifest.json`
 
-O GitHub armazena o código, mas **não executa** automaticamente este servidor Node.js. Para uso remoto, hospede em um serviço Node.js com HTTPS, configure o comando de inicialização `npm start` e a variável `PORT` conforme o serviço. Depois instale a URL `https://seu-dominio/manifest.json` no Stremio.
+Abra **Teste de reprodução (livre) → Big Buck Bunny** e tente reproduzir. A reprodução requer conexão com a internet; um player/cliente pode não aceitar todos os formatos.
+
+## Configurar streams autorizados de um episódio
+
+Edite o arquivo **`streams.json`**. Cada chave usa a identificação Stremio `tt7587890:temporada:episódio`, por exemplo `tt7587890:1:1`. Abaixo está **somente um exemplo do formato**, com URL fictícia que **não funciona** — substitua por uma fonte sua ou licenciada que permita reprodução direta.
+
+```json
+{
+  "tt7587890:1:1": [
+    {
+      "name": "PT-BR • 1080p",
+      "title": "Episódio 1 • áudio PT-BR verificado",
+      "url": "https://exemplo-autorizado.invalid/episodio1.mp4"
+    }
+  ]
+}
+```
+
+Guarde em `streams.json` e reinicie `npm start`. Apenas inclua links diretos HTTP(S) que você tem autorização para oferecer. O addon não extrai vídeos de plataformas pagas, não contorna DRM e **não garante dublagem** sem verificação da fonte. Não publique URLs privadas nem tokens de acesso no repositório público.
+
+Sem links válidos configurados, clicar em *The Rookie* continuará mostrando o episódio, mas **não haverá stream fornecido por este addon**. Outras extensões instaladas no Stremio podem oferecer opções próprias, independentes deste projeto.
 
 ## Como funciona
 
-- `/manifest.json`: informações do addon.
-- `/catalog/series/series-ptbr.json`: lista de títulos.
-- `/meta/series/tt7587890.json`: detalhes e episódios, obtidos de `v3-cinemeta.strem.io`.
-- Nenhum recurso `stream` é fornecido por esta versão.
+| Endpoint | Função |
+|---|---|
+| `/manifest.json` | Recursos do addon |
+| `/catalog/series/series-ptbr.json` | Catálogo da série |
+| `/catalog/movie/demonstracao.json` | Catálogo do filme de teste |
+| `/meta/series/tt7587890.json` | Episódios obtidos do Cinemeta |
+| `/stream/movie/tt1254207.json` | Demonstração aberta |
+| `/stream/series/tt7587890:1:1.json` | Fontes configuradas para S01E01 |
 
-## Próximas etapas
-
-Adicionar mais séries, permitir marcar dublagem **verificada** por plataforma e episódio, implementar cache persistente e testar hospedagem online.
+Para usar fora do notebook, hospede o servidor Node em um serviço HTTPS. O GitHub hospeda o código, não o servidor em execução.
 
 ## Licença
 
-MIT. Este projeto é independente do Stremio, da ByteDance e das distribuidoras.
+MIT. Projeto independente do Stremio e das distribuidoras.
