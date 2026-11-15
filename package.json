@@ -1,0 +1,14 @@
+{
+  "name": "stremio-dublados-br",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Catálogo Stremio de séries com foco em opções de áudio PT-BR e fontes autorizadas.",
+  "main": "addon.js",
+  "scripts": {
+    "start": "node addon.js",
+    "test": "node --test"
+  },
+  "engines": { "node": ">=18" },
+  "dependencies": { "stremio-addon-sdk": "^1.6.10" },
+  "license": "MIT"
+}
